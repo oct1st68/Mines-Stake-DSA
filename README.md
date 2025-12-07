@@ -8,7 +8,7 @@ Mines-Stake-DSA merges elements of Minesweeper — uncovering safe tiles, avoidi
 
 A project combining the classic gameplay of Minesweeper with “Mines” on Stake for a DSA project
 
-# 🚀 Getting Started
+# 📦 Installation
 ## Requirements
 ```bash
 # Check Java version (must be 21+)
@@ -38,17 +38,15 @@ javac -d out -sourcepath src src/main/Main.java
 java -cp out:res main.Main
 ```
 
-# 🧠 How It Works
+# 🧠 How to play
 
-- Players choose a grid (similar to Minesweeper).
+- Players choose a grid (similar to Minesweeper)
 
-- A number of bombs are randomly placed on the board.
+- A number of bombs are randomly placed on the board
 
 - Players reveal tiles one by one:
-If a tile is safe → the player continues.
+  - If a tile is safe → the player continues and show the multiplier when cashing out 
 
-If a mine is uncovered → game over (or lose stake), similar to casino risk.
-
-(Optional) A betting or stake system: players place a “bet” before unveiling tiles; winning depends on how long you avoid mines.
+  - If a bomb is uncovered → game over → reduce money from betting 
 
 
