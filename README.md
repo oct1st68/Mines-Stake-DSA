@@ -30,12 +30,8 @@ cd Mines-Stake-DSA
 
 Build and run using your IDE, or via command line:
 ```bash
-# Method 1: From IDE
+#From IDE
 Right-click Main.java > Run 'Main.main()'
-
-# Method 2: From terminal
-javac -d out -sourcepath src src/Main/Main.java
-java -cp out:res Main.Main
 ```
 
 # 🧠 How It Works
