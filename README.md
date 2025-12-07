@@ -4,9 +4,7 @@ A project combining the classic gameplay of Minesweeper with “Mines” on Stak
 
 # 🎯 Overview
 
-Mines-Stake-DSA merges elements of Minesweeper — uncovering safe tiles, avoiding “mines” — with a casino-inspired betting system. It’s designed as a DSA project to practice algorithms, game logic, and possibly risk/reward mechanics.
-
-A project combining the classic gameplay of Minesweeper with “Mines” on Stake for a DSA project
+Mines-Stake-DSA merges elements of Minesweeper (finding safe areas, avoiding mines)  with a casino-inspired betting system from Stake. It’s designed as a DSA project to practice algorithms, game logic, and possibly risk/reward mechanics
 
 # 📦 Installation
 ## Requirements
