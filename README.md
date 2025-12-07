@@ -43,7 +43,7 @@ java -cp out:res main.Main
 - A number of bombs are randomly placed on the board
 
 - Players reveal tiles one by one:
-  - If a tile is safe → the player continues and show the multiplier when cashing out 
+  - If a tile is safe → the player continues and show the next multiplier 
 
   - If a bomb is uncovered → game over → reduce money from betting 
 
