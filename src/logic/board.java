@@ -14,6 +14,7 @@ public class board {
         this.totalBombs = totalBombs;
         initializeBoard();
         placeBombs();
+        printBoard();
     }
 
     private void initializeBoard(){
@@ -41,10 +42,8 @@ public class board {
     }
 
     public square getSquare(int row, int col) {
-        if (row >= 0 && row < size && col >= 0 && col < size) {
-            return squares.get(row * size + col);
-        }
-        return null;
+        int index = row * size + col;
+        return squares.get(index);
     }
 
     public boolean revealSquare(int index) {
@@ -53,7 +52,7 @@ public class board {
         if (sq.isRevealed()) return true;
 
         sq.reveal();
-//        moveHistory.push(index); // DSA: save Stack of moves
+//       moveHistory.push(index); // DSA: save Stack of moves
 
         if (sq.isBomb()) {
             this.isGameOver = true;
@@ -63,5 +62,20 @@ public class board {
     }
 
     public int getSize() { return size; }
+
+    //print out for debugging
+    private void printBoard() {
+        for (int i = 0; i < size; i++) {
+            for (int j = 0; j < size; j++) {
+                square sq = getSquare(i, j);
+                if (sq.isBomb()) {
+                    System.out.print(" X ");
+                } else {
+                    System.out.print(" O ");
+                }
+            }
+            System.out.println();
+        }
+    }
 }
 
