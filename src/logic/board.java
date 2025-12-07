@@ -7,11 +7,15 @@ public class board {
     private int totalBombs;
     private int size = 5;
 
+    private Stack<Integer> moveHistory; // DSA: Stack to save moves
+
     private boolean isGameOver;
     private boolean isCashout;
 
     public board(int totalBombs) {
         this.totalBombs = totalBombs;
+        this.squares = new ArrayList<>();
+        this.moveHistory = new Stack<>();
         initializeBoard();
         placeBombs();
         printBoard();
@@ -27,6 +31,7 @@ public class board {
     private void placeBombs() {
         this.isGameOver = false;
         this.isCashout = false;
+        this.moveHistory.clear();
 
         //reset
         for (square s : squares) s.reset();
@@ -52,7 +57,7 @@ public class board {
         if (sq.isRevealed()) return true;
 
         sq.reveal();
-//       moveHistory.push(index); // DSA: save Stack of moves
+        moveHistory.push(index);
 
         if (sq.isBomb()) {
             this.isGameOver = true;
@@ -76,6 +81,31 @@ public class board {
             }
             System.out.println();
         }
+        System.out.println("----------------");
+    }
+
+    public boolean isGameOver() { return isGameOver; }
+    public boolean isCashout() { return isCashout; }
+    public void setCashout(boolean cashout) { isCashout = cashout; }
+    public int getTotalBombs() { return totalBombs; }
+    public Stack<Integer> getMoveHistory() { return moveHistory; }
+
+    public boolean isBomb(int index){
+        return squares.get(index).isBomb();
+    }
+
+    public boolean isRevealed(int index){
+        return squares.get(index).isRevealed();
+    }
+
+    public int getTotalRevealed(){
+        int count = 0;
+        for (square sq : squares){
+            if (sq.isRevealed() && !sq.isBomb()){
+                count++;
+            }
+        }
+        return count;
     }
 }
 

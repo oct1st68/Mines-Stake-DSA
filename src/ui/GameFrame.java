@@ -15,7 +15,7 @@ public class GameFrame extends JFrame {
     private final int SIZE = 5;
 
     public GameFrame() {
-        this.setTitle("Minestake Game");
+        this.setTitle("MineStake Game");
         this.setSize(800, 600);
         this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         this.setLayout(new BorderLayout());
