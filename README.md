@@ -7,7 +7,7 @@ A project combining the classic gameplay of Minesweeper with “Mines” on Stak
 Mines-Stake-DSA merges elements of Minesweeper (finding safe areas, avoiding mines)  with a casino-inspired betting system from Stake. It’s designed as a DSA project to practice algorithms, game logic, and possibly risk/reward mechanics
 
 # Directory Structure:
-
+```
 └── ./
     └── src
         ├── controller
@@ -21,8 +21,7 @@ Mines-Stake-DSA merges elements of Minesweeper (finding safe areas, avoiding min
         │   └── Main.java
         └── ui
             └── GameFrame.java
-
-
+```
 
 # 📦 Installation
 ## Requirements
