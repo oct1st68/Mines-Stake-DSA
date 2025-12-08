@@ -1,10 +1,14 @@
 package ui;
 
 import javax.swing.*;
+import javax.swing.border.EmptyBorder;
 import java.awt.*;
 import java.awt.event.ActionListener;
+import javax.swing.border.LineBorder;
 
 public class GameFrame extends JFrame {
+    private JPanel gridPanel;
+    private JPanel gridWrapper;
     private JButton[][] gridButtons;
     private JLabel lblBalance;
     private JLabel lblCurrentWin;
@@ -14,78 +18,276 @@ public class GameFrame extends JFrame {
     private JButton btnCashOut;
     private final int SIZE = 5;
 
+    private static final Color BG_DARK      = new Color(9, 11, 19);
+    private static final Color CARD_BG      = new Color(15, 23, 42);
+    private static final Color CARD_BORDER  = new Color(30, 41, 59);
+    private static final Color TEXT_PRIMARY = new Color(226, 232, 240);
+    private static final Color TEXT_MUTED   = new Color(148, 163, 184);
+    private static final Color ACCENT_BLUE  = new Color(56, 189, 248);
+    private static final Color ACCENT_GREEN = new Color(34, 197, 94);
+    private static final Color TILE_IDLE    = new Color(30, 41, 59);
+    private static final Color TILE_BORDER  = new Color(51, 65, 85);
+
+    class RoundedTileButton extends JButton {
+        private final int arc = 16;
+
+        public RoundedTileButton() {
+            setContentAreaFilled(false);
+            setFocusPainted(false);
+            setBorderPainted(false);
+        }
+
+        @Override
+        protected void paintComponent(Graphics g) {
+            Graphics2D g2 = (Graphics2D) g.create();
+            g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING,
+                    RenderingHints.VALUE_ANTIALIAS_ON);
+
+            g2.setColor(getBackground());
+            g2.fillRoundRect(0, 0, getWidth(), getHeight(), arc, arc);
+
+            g2.dispose();
+            super.paintComponent(g);
+        }
+    }
+
     public GameFrame() {
         this.setTitle("MineStake Game");
-        this.setSize(800, 600);
         this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        this.setSize(1000, 650);
+        this.setLocationRelativeTo(null);
         this.setLayout(new BorderLayout());
+        this.getContentPane().setBackground(BG_DARK);
+
+        //try {
+            //UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
+        //} catch (Exception ignored) {}
 
         initTopPanel();
-        initGridPanel();
-        initControlPanel();
+        initCenterLayout();
+        addComponentListener(new java.awt.event.ComponentAdapter() {
+            @Override
+            public void componentResized(java.awt.event.ComponentEvent e) {
+                rescaleGrid();
+            }
+        });
+    }
+    private void rescaleGrid() {
+        if (gridPanel == null || gridWrapper == null) return;
+
+        int w = gridWrapper.getWidth();
+        int h = gridWrapper.getHeight();
+        if (w <= 0 || h <= 0) return;
+
+        int side = Math.min(w, h);
+        gridPanel.setPreferredSize(new Dimension(side, side));
+
+        int cellSize = side / SIZE;
+        int fontSize = (int)(cellSize * 0.45);
+        if (fontSize < 8) fontSize = 8;
+
+        for (int i = 0; i < SIZE; i++) {
+            for (int j = 0; j < SIZE; j++) {
+                JButton btn = gridButtons[i][j];
+                btn.setFont(btn.getFont().deriveFont((float) fontSize));
+            }
+        }
+
+        gridWrapper.revalidate();
+        gridWrapper.repaint();
+    }
+
+
+    private void addTileHoverEffect(JButton btn) {
+        btn.addMouseListener(new java.awt.event.MouseAdapter() {
+            Color hoverColor = TILE_BORDER.brighter();
+            Color normalColor = TILE_IDLE;
+
+            @Override
+            public void mouseEntered(java.awt.event.MouseEvent e) {
+                if (btn.isEnabled() && btn.getText().isEmpty()) {
+                    btn.setBackground(hoverColor);
+                }
+            }
+
+            @Override
+            public void mouseExited(java.awt.event.MouseEvent e) {
+                if (btn.isEnabled() && btn.getText().isEmpty()) {
+                    btn.setBackground(normalColor);
+                }
+            }
+        });
+    }
+    private void addButtonHoverEffect(JButton btn, Color baseColor) {
+        Color hoverColor = baseColor.brighter();
+
+        btn.addMouseListener(new java.awt.event.MouseAdapter() {
+            @Override
+            public void mouseEntered(java.awt.event.MouseEvent e) {
+                if (btn.isEnabled()) {
+                    btn.setBackground(hoverColor);
+                }
+            }
+
+            @Override
+            public void mouseExited(java.awt.event.MouseEvent e) {
+                btn.setBackground(baseColor);
+            }
+        });
     }
 
     private void initTopPanel() {
-        JPanel topPanel = new JPanel(new GridLayout(1, 2));
-        lblBalance = new JLabel("Balance: $0.0");
-        lblBalance.setFont(new Font("Arial", Font.BOLD, 16));
-        lblBalance.setHorizontalAlignment(SwingConstants.CENTER);
+        JPanel topPanel = new JPanel(new BorderLayout());
+        topPanel.setBorder(new EmptyBorder(16, 24, 8, 24));
+        topPanel.setBackground(BG_DARK);
 
-        lblCurrentWin = new JLabel("Current Win: $0.0");
-        lblCurrentWin.setFont(new Font("Arial", Font.BOLD, 16));
-        lblCurrentWin.setForeground(new Color(0, 150, 0));
-        lblCurrentWin.setHorizontalAlignment(SwingConstants.CENTER);
+        JLabel title = new JLabel("Mines – Stake-style Demo");
+        title.setForeground(TEXT_PRIMARY);
+        title.setFont(new Font("Segoe UI", Font.BOLD, 20));
 
-        topPanel.add(lblBalance);
-        topPanel.add(lblCurrentWin);
+        JPanel balancePanel = new JPanel(new GridLayout(1, 2, 12, 0));
+        balancePanel.setOpaque(false);
+
+        lblBalance = new JLabel("Balance: $0.00");
+        lblBalance.setFont(new Font("Segoe UI", Font.BOLD, 14));
+        lblBalance.setForeground(TEXT_PRIMARY);
+        lblBalance.setHorizontalAlignment(SwingConstants.RIGHT);
+
+        lblCurrentWin = new JLabel("Current Win: $0.00");
+        lblCurrentWin.setFont(new Font("Segoe UI", Font.BOLD, 14));
+        lblCurrentWin.setForeground(ACCENT_GREEN);
+        lblCurrentWin.setHorizontalAlignment(SwingConstants.RIGHT);
+
+        balancePanel.add(lblBalance);
+        balancePanel.add(lblCurrentWin);
+
+        topPanel.add(title, BorderLayout.WEST);
+        topPanel.add(balancePanel, BorderLayout.EAST);
         this.add(topPanel, BorderLayout.NORTH);
     }
 
-    private void initGridPanel() {
-        JPanel gridPanel = new JPanel(new GridLayout(SIZE, SIZE, 5, 5));
-        gridPanel.setBorder(BorderFactory.createEmptyBorder(20, 20, 20, 20));
+    private void initCenterLayout() {
+        JPanel center = new JPanel(new BorderLayout());
+        center.setOpaque(false);
+        center.setBorder(new EmptyBorder(8, 24, 24, 24));
+
+        gridWrapper = new JPanel(new GridBagLayout());
+        gridWrapper.setOpaque(false);
+        gridWrapper.add(initGridPanel());
+        center.add(gridWrapper, BorderLayout.CENTER);
+
+        center.add(initControlPanel(), BorderLayout.EAST);
+
+        this.add(center, BorderLayout.CENTER);
+
+        gridWrapper.addComponentListener(new java.awt.event.ComponentAdapter() {
+            @Override
+            public void componentResized(java.awt.event.ComponentEvent e) {
+                rescaleGrid();
+            }
+        });
+    }
+
+
+    private JPanel initGridPanel() {
+        gridPanel = new JPanel(new GridLayout(SIZE, SIZE, 8, 8));
+        gridPanel.setBackground(BG_DARK);
+        gridPanel.setBorder(new EmptyBorder(16, 16, 16, 16));
+
         gridButtons = new JButton[SIZE][SIZE];
 
         for (int i = 0; i < SIZE; i++) {
             for (int j = 0; j < SIZE; j++) {
-                JButton btn = new JButton();
+                RoundedTileButton btn = new RoundedTileButton();
                 btn.setFont(new Font("Segoe UI Emoji", Font.PLAIN, 24));
                 btn.setFocusPainted(false);
-                btn.setEnabled(false); // Disable lúc chưa start game
+                btn.setBorder(BorderFactory.createLineBorder(TILE_BORDER));
+                btn.setBackground(TILE_IDLE);
+                btn.setForeground(TEXT_PRIMARY);
+                btn.setEnabled(false);
+                btn.setMargin(new Insets(0, 0, 0, 0));
+                addTileHoverEffect(btn);
                 gridButtons[i][j] = btn;
                 gridPanel.add(btn);
             }
         }
-        this.add(gridPanel, BorderLayout.CENTER);
+        return gridPanel;
     }
 
-    private void initControlPanel() {
-        JPanel controlPanel = new JPanel();
 
-        controlPanel.add(new JLabel("Bet Amount:"));
-        txtBetAmount = new JTextField("100", 5);
+    private JPanel initControlPanel() {
+        JPanel card = new JPanel();
+        card.setLayout(new BoxLayout(card, BoxLayout.Y_AXIS));
+        card.setBackground(CARD_BG);
+        card.setBorder(BorderFactory.createCompoundBorder(
+                BorderFactory.createLineBorder(CARD_BORDER),
+                new EmptyBorder(16, 16, 16, 16)
+        ));
+        card.setPreferredSize(new Dimension(260, 0));
 
-        controlPanel.add(new JLabel("Bombs (1-24):"));
-        txtBombCount = new JTextField("3", 3);
+        JLabel lblBetTitle = new JLabel("Bet Settings");
+        lblBetTitle.setFont(new Font("Segoe UI", Font.BOLD, 16));
+        lblBetTitle.setForeground(TEXT_PRIMARY);
 
-        btnStart = new JButton("START GAME");
-        btnStart.setBackground(new Color(50, 120, 200));
-        btnStart.setForeground(Color.WHITE);
+        JLabel lblBetAmount = new JLabel("Bet amount");
+        lblBetAmount.setForeground(TEXT_MUTED);
 
-        btnCashOut = new JButton("CASH OUT");
-        btnCashOut.setBackground(new Color(40, 160, 80));
-        btnCashOut.setForeground(Color.WHITE);
+        txtBetAmount = new JTextField("100", 8);
+        styleTextField(txtBetAmount);
+
+        JLabel lblBombs = new JLabel("Bombs (1–24)");
+        lblBombs.setForeground(TEXT_MUTED);
+
+        txtBombCount = new JTextField("3", 8);
+        styleTextField(txtBombCount);
+
+        btnStart = new JButton("Start game");
+        stylePrimaryButton(btnStart, ACCENT_BLUE);
+        addButtonHoverEffect(btnStart, ACCENT_BLUE);
+
+        btnCashOut = new JButton("Cash out");
+        stylePrimaryButton(btnCashOut, ACCENT_GREEN);
+        addButtonHoverEffect(btnCashOut, ACCENT_GREEN);
         btnCashOut.setEnabled(false);
 
-        controlPanel.add(txtBetAmount);
-        controlPanel.add(txtBombCount);
-        controlPanel.add(btnStart);
-        controlPanel.add(btnCashOut);
+        card.add(lblBetTitle);
+        card.add(Box.createVerticalStrut(16));
 
-        this.add(controlPanel, BorderLayout.SOUTH);
+        card.add(lblBetAmount);
+        card.add(Box.createVerticalStrut(4));
+        card.add(txtBetAmount);
+        card.add(Box.createVerticalStrut(12));
+
+        card.add(lblBombs);
+        card.add(Box.createVerticalStrut(4));
+        card.add(txtBombCount);
+        card.add(Box.createVerticalStrut(16));
+
+        card.add(btnStart);
+        card.add(Box.createVerticalStrut(8));
+        card.add(btnCashOut);
+        card.add(Box.createVerticalGlue());
+
+        return card;
     }
-
-    // --- Các phương thức để Controller tương tác ---
+    private void stylePrimaryButton(JButton btn, Color bg) {
+        btn.setBackground(bg);
+        btn.setForeground(Color.WHITE);
+        btn.setFont(new Font("Segoe UI", Font.BOLD, 14));
+        btn.setFocusPainted(false);
+        btn.setBorder(BorderFactory.createEmptyBorder(8, 12, 8, 12));
+        btn.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
+    }
+    private void styleTextField(JTextField tf) {
+        tf.setBackground(new Color(15, 23, 42));
+        tf.setForeground(TEXT_PRIMARY);
+        tf.setCaretColor(TEXT_PRIMARY);
+        tf.setBorder(BorderFactory.createCompoundBorder(
+                BorderFactory.createLineBorder(CARD_BORDER),
+                new EmptyBorder(4, 8, 4, 8)
+        ));
+        tf.setFont(new Font("Segoe UI", Font.PLAIN, 13));
+    }
 
     public void updateBalance(double amount) {
         lblBalance.setText(String.format("Balance: $%.2f", amount));
@@ -115,7 +317,7 @@ public class GameFrame extends JFrame {
         for (int i = 0; i < SIZE; i++) {
             for (int j = 0; j < SIZE; j++) {
                 gridButtons[i][j].setText("");
-                gridButtons[i][j].setBackground(null);
+                gridButtons[i][j].setBackground(TILE_IDLE);
             }
         }
     }
@@ -123,21 +325,19 @@ public class GameFrame extends JFrame {
     public void revealCell(int r, int c, boolean isBomb) {
         if (isBomb) {
             gridButtons[r][c].setText("💣");
-            gridButtons[r][c].setBackground(Color.RED);
+            gridButtons[r][c].setBackground(new Color(220, 38, 38));
         } else {
             gridButtons[r][c].setText("💎");
-            gridButtons[r][c].setBackground(Color.GREEN);
+            gridButtons[r][c].setBackground(new Color(22, 163, 74)); 
         }
         gridButtons[r][c].setEnabled(false);
     }
 
-    // Dependency Injection cho Events
     public void addStartListener(ActionListener listener) { btnStart.addActionListener(listener); }
     public void addCashOutListener(ActionListener listener) { btnCashOut.addActionListener(listener); }
 
     public void addGridListener(int r, int c, ActionListener listener) {
-        // Xóa listener cũ để tránh bị duplicate khi start game mới
-        for(ActionListener al : gridButtons[r][c].getActionListeners()) {
+        for (ActionListener al : gridButtons[r][c].getActionListeners()) {
             gridButtons[r][c].removeActionListener(al);
         }
         gridButtons[r][c].addActionListener(listener);
