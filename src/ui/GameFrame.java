@@ -6,6 +6,8 @@ import java.awt.*;
 import java.awt.event.ActionListener;
 import javax.swing.border.LineBorder;
 
+import static ui.Theme.*;
+
 public class GameFrame extends JFrame {
     private JPanel gridPanel;
     private JPanel gridWrapper;
@@ -18,15 +20,6 @@ public class GameFrame extends JFrame {
     private JButton btnCashOut;
     private final int SIZE = 5;
 
-    private static final Color BG_DARK      = new Color(9, 11, 19);
-    private static final Color CARD_BG      = new Color(15, 23, 42);
-    private static final Color CARD_BORDER  = new Color(30, 41, 59);
-    private static final Color TEXT_PRIMARY = new Color(226, 232, 240);
-    private static final Color TEXT_MUTED   = new Color(148, 163, 184);
-    private static final Color ACCENT_BLUE  = new Color(56, 189, 248);
-    private static final Color ACCENT_GREEN = new Color(34, 197, 94);
-    private static final Color TILE_IDLE    = new Color(30, 41, 59);
-    private static final Color TILE_BORDER  = new Color(51, 65, 85);
 
     class RoundedTileButton extends JButton {
         private final int arc = 16;

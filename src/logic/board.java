@@ -16,10 +16,21 @@ public class board {
         this.totalBombs = totalBombs;
         this.squares = new ArrayList<>();
         this.moveHistory = new Stack<>();
-        initializeBoard();
-        placeBombs();
+
+        startGame();
         printBoard();
     }
+
+    private void startGame(){
+        this.isGameOver = false;
+        this.isCashout = false;
+        this.moveHistory.clear();
+
+        initializeBoard();
+        placeBombs();
+    }
+
+
 
     private void initializeBoard(){
         squares = new ArrayList<>();
@@ -29,9 +40,7 @@ public class board {
     }
 
     private void placeBombs() {
-        this.isGameOver = false;
-        this.isCashout = false;
-        this.moveHistory.clear();
+
 
         //reset
         for (square s : squares) s.reset();
