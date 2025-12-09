@@ -37,7 +37,7 @@ public class GameController {
     private void startGame() {
         try {
             double bet = Double.parseDouble(view.getBetAmount());
-            int bombs = Integer.parseInt(view.getBombCount());
+            int bombs = view.getBombCount();
 
             if (bombs < 1 || bombs > 24) {
                 view.showMessage("Bombs must be between 1 and 24!");
@@ -122,7 +122,7 @@ public class GameController {
 
         view.updateBalance(wallet.getBalance());
 
-        // Hiện Popup Thắng
+        // popup win
         view.showResultPopup(true, currentMultiplier, winAmount);
 
         gameOver(true);

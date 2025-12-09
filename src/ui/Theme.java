@@ -17,4 +17,8 @@ public class Theme {
     public static final Font FONT_POPUP_BIG = new Font("SansSerif", Font.BOLD, 32);
     public static final Font FONT_POPUP_SMALL = new Font("SansSerif", Font.BOLD, 16);
     public static final Color TILE_DEFAULT = new Color(47, 69, 83);
+    public static final Color INPUT_BG = new Color(15, 25, 35);
+    public static final Color TEXT_GRAY = new Color(177, 186, 211);
+    public static final Font FONT_BOLD = new Font("SansSerif", Font.BOLD, 14);
+    public static final Color TILE_HOVER = new Color(60, 85, 100);
 }

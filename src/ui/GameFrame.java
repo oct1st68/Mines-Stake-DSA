@@ -13,12 +13,13 @@ public class GameFrame extends JFrame {
     private JPanel gridPanel;
     private JPanel gridWrapper;
     private JButton[][] gridButtons;
+    private JPanel glassPane;
     private JLabel lblBalance;
     private JLabel lblCurrentWin;
     private JTextField txtBetAmount;
-    private JTextField txtBombCount;
     private JButton btnStart;
     private JButton btnCashOut;
+    private JComboBox<Integer> cbBombs;
     private final int SIZE = 5;
 
 
@@ -33,7 +34,7 @@ public class GameFrame extends JFrame {
         //try {
             //UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
         //} catch (Exception ignored) {}
-
+        setupGlassPane();
         initTopPanel();
         initCenterLayout();
         addComponentListener(new java.awt.event.ComponentAdapter() {
@@ -191,6 +192,7 @@ public class GameFrame extends JFrame {
 
     private JPanel initControlPanel() {
         JPanel card = new JPanel();
+
         card.setLayout(new BoxLayout(card, BoxLayout.Y_AXIS));
         card.setBackground(CARD_BG);
         card.setBorder(BorderFactory.createCompoundBorder(
@@ -216,12 +218,13 @@ public class GameFrame extends JFrame {
         JLabel lblBombs = new JLabel("Bombs (1–24)");
         lblBombs.setForeground(TEXT_MUTED);
 
-        //size of bomb count text field
-        txtBombCount = new JTextField("3", 8);
-        styleTextField(txtBombCount);
-        txtBombCount.setMaximumSize(new Dimension(120, 20));
-        txtBombCount.setPreferredSize(new Dimension(120, 20));
-        txtBombCount.setAlignmentX(Component.CENTER_ALIGNMENT);
+        Integer[] minesOpt = new Integer[24];
+        for(int i=0; i<24; i++) minesOpt[i] = i;
+        cbBombs = new JComboBox<>(minesOpt);
+        cbBombs.setSelectedIndex(3); // Default 3 mines
+        styleComboBox(cbBombs);
+        card.add(cbBombs);
+        card.add(Box.createVerticalStrut(20));
 
         btnStart = new JButton("Bet");
         stylePrimaryButton(btnStart, ACCENT_BLUE);
@@ -242,7 +245,7 @@ public class GameFrame extends JFrame {
 
         card.add(lblBombs);
         card.add(Box.createVerticalStrut(4));
-        card.add(txtBombCount);
+        card.add(cbBombs);
         card.add(Box.createVerticalStrut(16));
 
         card.add(btnStart);
@@ -252,6 +255,14 @@ public class GameFrame extends JFrame {
 
         return card;
     }
+
+    private void styleComboBox(JComboBox box) {
+        box.setMaximumSize(new Dimension(300, 40));
+        box.setAlignmentX(Component.LEFT_ALIGNMENT);
+        box.setBackground(Theme.INPUT_BG);
+        box.setForeground(Color.WHITE);
+    }
+
     private void stylePrimaryButton(JButton btn, Color bg) {
         btn.setBackground(bg);
         btn.setForeground(Color.WHITE);
@@ -280,13 +291,14 @@ public class GameFrame extends JFrame {
     }
 
     public String getBetAmount() { return txtBetAmount.getText(); }
-    public String getBombCount() { return txtBombCount.getText(); }
+    public int getBombCount() { return (Integer) cbBombs.getSelectedIndex(); }
 
     public void setGameActiveState(boolean isActive) {
         btnStart.setEnabled(!isActive);
         btnCashOut.setEnabled(isActive);
         txtBetAmount.setEnabled(!isActive);
-        txtBombCount.setEnabled(!isActive);
+        cbBombs.setEnabled(isActive);
+        //txtBombCount.setEnabled(!isActive);
 
         for (int i = 0; i < SIZE; i++) {
             for (int j = 0; j < SIZE; j++) {
@@ -316,8 +328,36 @@ public class GameFrame extends JFrame {
     }
 
     public void showResultPopup(boolean win, double multiplier, double amount) {
+        setGridBlur(true);
         popup popup = new popup(this, win, multiplier, amount);
         popup.setVisible(true);
+        setGridBlur(false);
+    }
+
+    private void setupGlassPane() {
+        glassPane = new JPanel() {
+            @Override
+            protected void paintComponent(Graphics g) {
+                Graphics2D g2d = (Graphics2D) g.create();
+
+                // Create blur effect
+                g2d.setRenderingHint(RenderingHints.KEY_RENDERING, RenderingHints.VALUE_RENDER_QUALITY);
+
+                // Dark semi-transparent overlay simulating blur
+                g2d.setColor(new Color(0, 0, 0, 180));
+                g2d.fillRect(0, 0, getWidth(), getHeight());
+
+                g2d.dispose();
+            }
+        };
+        glassPane.setOpaque(false);
+        glassPane.setVisible(false);
+        glassPane.addMouseListener(new java.awt.event.MouseAdapter() {}); // Block clicks
+        setGlassPane(glassPane);
+    }
+
+    public void setGridBlur(boolean blur) {
+        glassPane.setVisible(blur);
     }
 
     public void setTileState(int index, String text, Color bg, Color fg) {

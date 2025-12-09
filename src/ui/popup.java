@@ -15,7 +15,7 @@ public class popup extends JDialog {
 
         Color accentColor = isWin ? Theme.ACCENT_GREEN : Theme.ACCENT_RED;
         String multiText = String.format("%.2fx", multiplier);
-        String amountText = isWin ? String.format("+$%.2f", amount) : "Good luck next time!";
+        String amountText = isWin ? String.format("+$%.2f", amount) : "YOU SUCK";
 
         RoundedPanel panel = new RoundedPanel();
         panel.setBackground(Theme.BG_PANEL);
