@@ -141,9 +141,9 @@ public class GameFrame extends JFrame {
         topPanel.setBorder(new EmptyBorder(16, 24, 8, 24));
         topPanel.setBackground(BG_DARK);
 
-        JLabel title = new JLabel("Mines – Stake-style Demo");
-        title.setForeground(TEXT_PRIMARY);
-        title.setFont(new Font("Segoe UI", Font.BOLD, 20));
+//        JLabel title = new JLabel("Mines – Stake-style Demo");
+//        title.setForeground(TEXT_PRIMARY);
+//        title.setFont(new Font("Segoe UI", Font.BOLD, 20));
 
         JPanel balancePanel = new JPanel(new GridLayout(1, 2, 12, 0));
         balancePanel.setOpaque(false);
@@ -161,7 +161,7 @@ public class GameFrame extends JFrame {
         balancePanel.add(lblBalance);
         balancePanel.add(lblCurrentWin);
 
-        topPanel.add(title, BorderLayout.WEST);
+        //topPanel.add(title, BorderLayout.WEST);
         topPanel.add(balancePanel, BorderLayout.EAST);
         this.add(topPanel, BorderLayout.NORTH);
     }
@@ -223,7 +223,7 @@ public class GameFrame extends JFrame {
                 BorderFactory.createLineBorder(CARD_BORDER),
                 new EmptyBorder(16, 16, 16, 16)
         ));
-        card.setPreferredSize(new Dimension(260, 0));
+        card.setPreferredSize(new Dimension(260, 280));
 
         JLabel lblBetTitle = new JLabel("Bet Settings");
         lblBetTitle.setFont(new Font("Segoe UI", Font.BOLD, 16));
@@ -232,16 +232,24 @@ public class GameFrame extends JFrame {
         JLabel lblBetAmount = new JLabel("Bet amount");
         lblBetAmount.setForeground(TEXT_MUTED);
 
-        txtBetAmount = new JTextField("100", 8);
+        //size of bet amount text field
+        txtBetAmount = new JTextField("100", 5);
         styleTextField(txtBetAmount);
+        txtBetAmount.setMaximumSize(new Dimension(120, 20));
+        txtBetAmount.setPreferredSize(new Dimension(120, 20));
+        txtBetAmount.setAlignmentX(Component.CENTER_ALIGNMENT);
 
         JLabel lblBombs = new JLabel("Bombs (1–24)");
         lblBombs.setForeground(TEXT_MUTED);
 
+        //size of bomb count text field
         txtBombCount = new JTextField("3", 8);
         styleTextField(txtBombCount);
+        txtBombCount.setMaximumSize(new Dimension(120, 20));
+        txtBombCount.setPreferredSize(new Dimension(120, 20));
+        txtBombCount.setAlignmentX(Component.CENTER_ALIGNMENT);
 
-        btnStart = new JButton("Start game");
+        btnStart = new JButton("Bet");
         stylePrimaryButton(btnStart, ACCENT_BLUE);
         addButtonHoverEffect(btnStart, ACCENT_BLUE);
 
