@@ -5,7 +5,7 @@ import javax.swing.border.EmptyBorder;
 import java.awt.*;
 import java.awt.event.ActionListener;
 import javax.swing.border.LineBorder;
-
+import ui.SoundPlayer;
 import static ui.Theme.*;
 import ui.*;
 
@@ -88,6 +88,11 @@ public class GameFrame extends JFrame {
                 if (btn.isEnabled() && btn.getText().isEmpty()) {
                     btn.setBackground(normalColor);
                 }
+            }
+
+            @Override
+            public void mouseClicked(java.awt.event.MouseEvent e) {
+                    SoundPlayer.playClickSound();
             }
         });
     }
@@ -330,6 +335,11 @@ public class GameFrame extends JFrame {
     public void showResultPopup(boolean win, double multiplier, double amount) {
         setGridBlur(true);
         popup popup = new popup(this, win, multiplier, amount);
+        if(win){
+            SoundPlayer.playWinSound();
+        } else {
+            SoundPlayer.playLoseSound();
+        }
         popup.setVisible(true);
         setGridBlur(false);
     }
