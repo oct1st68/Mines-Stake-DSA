@@ -7,6 +7,7 @@ import java.awt.event.ActionListener;
 import javax.swing.border.LineBorder;
 
 import static ui.Theme.*;
+import ui.*;
 
 public class GameFrame extends JFrame {
     private JPanel gridPanel;
@@ -20,29 +21,6 @@ public class GameFrame extends JFrame {
     private JButton btnCashOut;
     private final int SIZE = 5;
 
-
-    class RoundedTileButton extends JButton {
-        private final int arc = 16;
-
-        public RoundedTileButton() {
-            setContentAreaFilled(false);
-            setFocusPainted(false);
-            setBorderPainted(false);
-        }
-
-        @Override
-        protected void paintComponent(Graphics g) {
-            Graphics2D g2 = (Graphics2D) g.create();
-            g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING,
-                    RenderingHints.VALUE_ANTIALIAS_ON);
-
-            g2.setColor(getBackground());
-            g2.fillRoundRect(0, 0, getWidth(), getHeight(), arc, arc);
-
-            g2.dispose();
-            super.paintComponent(g);
-        }
-    }
 
     public GameFrame() {
         this.setTitle("MineStake Game");
@@ -65,6 +43,7 @@ public class GameFrame extends JFrame {
             }
         });
     }
+
     private void rescaleGrid() {
         if (gridPanel == null || gridWrapper == null) return;
 
@@ -111,6 +90,7 @@ public class GameFrame extends JFrame {
             }
         });
     }
+
     private void addButtonHoverEffect(JButton btn, Color baseColor) {
         Color hoverColor = baseColor.brighter();
 
@@ -140,6 +120,7 @@ public class GameFrame extends JFrame {
 
         JPanel balancePanel = new JPanel(new GridLayout(1, 2, 12, 0));
         balancePanel.setOpaque(false);
+        
 
         lblBalance = new JLabel("Balance: $0.00");
         lblBalance.setFont(new Font("Segoe UI", Font.BOLD, 14));
