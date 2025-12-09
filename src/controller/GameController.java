@@ -4,7 +4,13 @@ import logic.board;
 import logic.square;
 import logic.wallet;
 import ui.GameFrame;
+import ui.Theme;
+
+import java.awt.*;
 import java.awt.event.ActionEvent;
+
+import static logic.payout.calculateMultiplier;
+
 
 public class GameController {
     private GameFrame view;
@@ -20,10 +26,10 @@ public class GameController {
         this.view = view;
         this.wallet = wallet.getInstance();
 
-        // Cập nhật số dư ban đầu lên view
+        //update initial balance
         view.updateBalance(wallet.getBalance());
 
-        // Gắn sự kiện cho nút Start và Cashout
+        //add listeners to event
         this.view.addStartListener(e -> startGame());
         this.view.addCashOutListener(e -> cashOut());
     }
@@ -65,6 +71,11 @@ public class GameController {
         }
     }
 
+    private void resetGame() {
+        // reset game state
+        view.resetGrid();
+    }
+
     private void setupGridListeners() {
         for (int i = 0; i < board.getSize(); i++) {
             for (int j = 0; j < board.getSize(); j++) {
@@ -78,31 +89,30 @@ public class GameController {
     private void handleCellClick(int r, int c) {
         if (!isGameActive) return;
 
-        square cell = board.getSquare(r, c);
-        if (cell.isRevealed()) return;
+        // Convert 2D coordinates to 1D index if needed by your board logic,
+        // or keep using (r,c) if your board supports it.
+        // Assuming board uses (r,c) or 1D index internally.
+        int index = r * 5 + c;
 
-        cell.reveal();
+        if (board.isRevealed(index)) return;
 
-        if (cell.isBomb()) {
+        boolean safe = board.revealSquare(index);
+
+        if (safe) {
+            view.revealCell(r, c, false);
+            // WIN
+            currentMultiplier = calculateMultiplier(bombCount, board.getTotalRevealed());
+            view.updateCurrentWin(currentBet * currentMultiplier);
+            if (board.getTotalRevealed() == 25 - bombCount) {
+                cashOut(); // Auto cash out on full clear
+            }
+        } else {
             // LOSS
             view.revealCell(r, c, true);
             gameOver(false);
-        } else {
-            // WIN (Diamond)
-            view.revealCell(r, c, false);
-            calculateMultiplier();
         }
     }
 
-    private void calculateMultiplier() {
-        // Công thức đơn giản: Multiplier tăng dựa trên số bom
-        // (Đây là logic game basic, có thể thay đổi công thức phức tạp hơn)
-        double increase = 1.0 + (bombCount * 0.05);
-        currentMultiplier *= increase;
-
-        double currentWin = currentBet * currentMultiplier;
-        view.updateCurrentWin(currentWin);
-    }
 
     private void cashOut() {
         if (!isGameActive) return;
@@ -111,7 +121,9 @@ public class GameController {
         wallet.add(winAmount);
 
         view.updateBalance(wallet.getBalance());
-        view.showMessage("You cashed out: $" + String.format("%.2f", winAmount));
+
+        // Hiện Popup Thắng
+        view.showResultPopup(true, currentMultiplier, winAmount);
 
         gameOver(true);
     }
@@ -120,8 +132,18 @@ public class GameController {
         isGameActive = false;
         view.setGameActiveState(false);
         if (!win) {
-            view.showMessage("BOOM! You lost $" + currentBet);
-            view.updateCurrentWin(0);
+            view.showResultPopup(false, 0.0, 0.0);
         }
+        for (int i = 0; i < 25; i++) {
+            if (board.isRevealed(i)) continue;
+
+            if (board.isBomb(i)) {
+                if (win) view.setTileState(i, "💣", Theme.TILE_DEFAULT, null);
+                else view.setTileState(i, "💣", new Color(60, 30, 30), null);
+            } else {
+                view.setTileState(i, "💎", new Color(30, 40, 50), new Color(255, 255, 255, 100));
+            }
+        }
+        view.setGameActiveState(false);
     }
 }

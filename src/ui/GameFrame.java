@@ -120,7 +120,7 @@ public class GameFrame extends JFrame {
 
         JPanel balancePanel = new JPanel(new GridLayout(1, 2, 12, 0));
         balancePanel.setOpaque(false);
-        
+
 
         lblBalance = new JLabel("Balance: $0.00");
         lblBalance.setFont(new Font("Segoe UI", Font.BOLD, 14));
@@ -313,6 +313,18 @@ public class GameFrame extends JFrame {
             gridButtons[r][c].setBackground(new Color(22, 163, 74)); 
         }
         gridButtons[r][c].setEnabled(false);
+    }
+
+    public void showResultPopup(boolean win, double multiplier, double amount) {
+        popup popup = new popup(this, win, multiplier, amount);
+        popup.setVisible(true);
+    }
+
+    public void setTileState(int index, String text, Color bg, Color fg) {
+        RoundedTileButton btn = (RoundedTileButton) gridButtons[index/5][index%5];
+        btn.setText(text);
+        if (fg != null) btn.setForeground(fg);
+        btn.setEnabled(false);
     }
 
     public void addStartListener(ActionListener listener) { btnStart.addActionListener(listener); }

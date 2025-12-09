@@ -2,7 +2,7 @@ package ui;
 
 import java.awt.*;
 
-class Theme {
+public class Theme {
     public static final Color BG_DARK      = new Color(9, 11, 19);
     public static final Color CARD_BG      = new Color(15, 23, 42);
     public static final Color BG_PANEL = new Color(26, 44, 56);
@@ -16,4 +16,5 @@ class Theme {
     public static final Color TILE_BORDER  = new Color(51, 65, 85);
     public static final Font FONT_POPUP_BIG = new Font("SansSerif", Font.BOLD, 32);
     public static final Font FONT_POPUP_SMALL = new Font("SansSerif", Font.BOLD, 16);
+    public static final Color TILE_DEFAULT = new Color(47, 69, 83);
 }

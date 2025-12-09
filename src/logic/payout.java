@@ -3,7 +3,7 @@ package logic;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 
-class payout {
+public class payout {
     private static final double RTP = 0.95;
     private static final int TOTAL_TILES = 25;
 
