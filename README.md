@@ -8,6 +8,7 @@ Mines-Stake-DSA merges elements of Minesweeper (finding safe areas, avoiding min
 
 # Directory Structure:
 ```
+
 └── ./
     └── src
         ├── controller
@@ -20,7 +21,14 @@ Mines-Stake-DSA merges elements of Minesweeper (finding safe areas, avoiding min
         ├── main
         │   └── Main.java
         └── ui
-            └── GameFrame.java
+            ├── GameFrame.java
+            ├── popup.java
+            ├── RoundedPanel.java
+            ├── RoundedTileButton.java
+            ├── SoundPlayer.java
+            └── Theme.java
+
+
 ```
 
 # 📦 Installation
