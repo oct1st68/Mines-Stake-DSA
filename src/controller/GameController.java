@@ -56,7 +56,7 @@ public class GameController {
 
                 // Setup View
                 view.updateBalance(wallet.getBalance());
-                view.updateCurrentWin(bet); // Ban đầu cashout = tiền cược
+                view.updateProfitMultiplier(currentMultiplier);
                 view.resetGrid();
                 view.setGameActiveState(true);
 
@@ -102,7 +102,7 @@ public class GameController {
             view.revealCell(r, c, false);
             // WIN
             currentMultiplier = calculateMultiplier(bombCount, board.getTotalRevealed());
-            view.updateCurrentWin(currentBet * currentMultiplier);
+            view.updateProfitMultiplier(currentMultiplier);
             if (board.getTotalRevealed() == 25 - bombCount) {
                 cashOut(); // Auto cash out on full clear
             }

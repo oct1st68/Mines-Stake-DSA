@@ -15,8 +15,8 @@ public class GameFrame extends JFrame {
     private JButton[][] gridButtons;
     private JPanel glassPane;
     private JLabel lblBalance;
-    private JLabel lblCurrentWin;
     private JTextField txtBetAmount;
+    private JTextField txtProfit;
     private JButton btnStart;
     private JButton btnCashOut;
     private JComboBox<Integer> cbBombs;
@@ -124,25 +124,19 @@ public class GameFrame extends JFrame {
 //        title.setForeground(TEXT_PRIMARY);
 //        title.setFont(new Font("Segoe UI", Font.BOLD, 20));
 
-        JPanel balancePanel = new JPanel(new GridLayout(1, 2, 12, 0));
-        balancePanel.setOpaque(false);
-
+        JPanel balancePanel = new RoundedPanel();
+        balancePanel.setBackground(new Color(30, 50, 70));
+        balancePanel.setPreferredSize(new Dimension(180, 40));
+        balancePanel.setLayout(new FlowLayout(FlowLayout.CENTER, 10, 8));
 
         lblBalance = new JLabel("Balance: $0.00");
-        lblBalance.setFont(new Font("Segoe UI", Font.BOLD, 14));
-        lblBalance.setForeground(TEXT_PRIMARY);
-        lblBalance.setHorizontalAlignment(SwingConstants.RIGHT);
-
-        lblCurrentWin = new JLabel("Current Win: $0.00");
-        lblCurrentWin.setFont(new Font("Segoe UI", Font.BOLD, 14));
-        lblCurrentWin.setForeground(ACCENT_GREEN);
-        lblCurrentWin.setHorizontalAlignment(SwingConstants.RIGHT);
+        lblBalance.setFont(FONT_BOLD);
+        lblBalance.setForeground(Color.WHITE);
 
         balancePanel.add(lblBalance);
-        balancePanel.add(lblCurrentWin);
 
         //topPanel.add(title, BorderLayout.WEST);
-        topPanel.add(balancePanel, BorderLayout.EAST);
+        topPanel.add(balancePanel, BorderLayout.CENTER);
         this.add(topPanel, BorderLayout.NORTH);
     }
 
@@ -178,7 +172,7 @@ public class GameFrame extends JFrame {
 
         for (int i = 0; i < SIZE; i++) {
             for (int j = 0; j < SIZE; j++) {
-                RoundedTileButton btn = new RoundedTileButton();
+                JButton btn = new JButton();
                 btn.setFont(new Font("Segoe UI Emoji", Font.PLAIN, 24));
                 btn.setFocusPainted(false);
                 btn.setBorder(BorderFactory.createLineBorder(TILE_BORDER));
@@ -197,6 +191,7 @@ public class GameFrame extends JFrame {
 
     private JPanel initControlPanel() {
         JPanel card = new JPanel();
+        float alignX = Component.LEFT_ALIGNMENT;
 
         card.setLayout(new BoxLayout(card, BoxLayout.Y_AXIS));
         card.setBackground(CARD_BG);
@@ -204,53 +199,73 @@ public class GameFrame extends JFrame {
                 BorderFactory.createLineBorder(CARD_BORDER),
                 new EmptyBorder(16, 16, 16, 16)
         ));
-        card.setPreferredSize(new Dimension(260, 280));
+        card.setPreferredSize(new Dimension(260, 320));
 
-        JLabel lblBetTitle = new JLabel("Bet Settings");
-        lblBetTitle.setFont(new Font("Segoe UI", Font.BOLD, 16));
-        lblBetTitle.setForeground(TEXT_PRIMARY);
 
-        JLabel lblBetAmount = new JLabel("Bet amount");
-        lblBetAmount.setForeground(TEXT_MUTED);
+        JLabel lblBetTitle = new JLabel("Bet Amount");
+        lblBetTitle.setForeground(TEXT_MUTED);
 
-        //size of bet amount text field
-        txtBetAmount = new JTextField("100", 5);
-        styleTextField(txtBetAmount);
-        txtBetAmount.setMaximumSize(new Dimension(120, 20));
-        txtBetAmount.setPreferredSize(new Dimension(120, 20));
-        txtBetAmount.setAlignmentX(Component.CENTER_ALIGNMENT);
+        card.add(Box.createVerticalStrut(5));
+        txtBetAmount = createStyledTextField("100");
+        txtBetAmount.setMaximumSize(new Dimension(Integer.MAX_VALUE, 45)); // Full width
+        card.add(txtBetAmount);
+
+        card.add(Box.createVerticalStrut(8));
 
         JLabel lblBombs = new JLabel("Bombs (1–24)");
         lblBombs.setForeground(TEXT_MUTED);
+        card.add(Box.createVerticalStrut(5));
+
 
         Integer[] minesOpt = new Integer[24];
-        for(int i=0; i<24; i++) minesOpt[i] = i;
+        for(int i=0; i<24; i++) minesOpt[i] = i+1;
         cbBombs = new JComboBox<>(minesOpt);
-        cbBombs.setSelectedIndex(3); // Default 3 mines
+        cbBombs.setSelectedIndex(2); // Default 3 mines
+        cbBombs.setMaximumSize(new Dimension(Integer.MAX_VALUE, 45));
         styleComboBox(cbBombs);
         card.add(cbBombs);
-        card.add(Box.createVerticalStrut(20));
 
-        btnStart = new JButton("Bet");
-        stylePrimaryButton(btnStart, ACCENT_BLUE);
-        addButtonHoverEffect(btnStart, ACCENT_BLUE);
+        card.add(Box.createVerticalStrut(8));
 
-        btnCashOut = new JButton("Cash out");
-        stylePrimaryButton(btnCashOut, ACCENT_GREEN);
-        addButtonHoverEffect(btnCashOut, ACCENT_GREEN);
-        btnCashOut.setEnabled(false);
+        JLabel lblProfit = new JLabel("Profit");
+        lblProfit.setForeground(TEXT_MUTED);
+
+        card.add(Box.createVerticalStrut(5));
+        txtProfit = createStyledTextField("1.00x");
+        txtProfit.setEditable(false);
+        txtProfit.setForeground(Theme.TEXT_GRAY);
+        txtProfit.setMaximumSize(new Dimension(Integer.MAX_VALUE, 45));
+        card.add(txtProfit);
+
+
+        card.add(Box.createVerticalStrut(30));
+
+        btnStart = new RoundedTileButton("Bet", Theme.ACCENT_GREEN, new Color(50, 255, 50));
+        btnStart.setPreferredSize(new Dimension(0, 50)); // Height 50
+        btnStart.setMaximumSize(new Dimension(Integer.MAX_VALUE, 50)); // Full Width
+        btnStart.setAlignmentX(Component.CENTER_ALIGNMENT); // Căn giữa để BoxLayout giãn đều
+
+        btnCashOut = new RoundedTileButton("Cash out", BG_DARK, new Color(25, 35, 45));
+        btnCashOut.setPreferredSize(new Dimension(0, 50)); // Height 50
+        btnCashOut.setMaximumSize(new Dimension(Integer.MAX_VALUE, 50)); // Full Width
+        btnCashOut.setAlignmentX(Component.CENTER_ALIGNMENT); // Căn giữa để BoxLayout giãn đều
 
         card.add(lblBetTitle);
-        card.add(Box.createVerticalStrut(16));
-
-        card.add(lblBetAmount);
+        lblBetTitle.setAlignmentX(alignX);
         card.add(Box.createVerticalStrut(4));
         card.add(txtBetAmount);
-        card.add(Box.createVerticalStrut(12));
+        card.add(Box.createVerticalStrut(16));
 
         card.add(lblBombs);
+        lblBombs.setAlignmentX(alignX);
         card.add(Box.createVerticalStrut(4));
         card.add(cbBombs);
+        card.add(Box.createVerticalStrut(16));
+
+        card.add(lblProfit);
+        lblProfit.setAlignmentX(alignX);
+        card.add(Box.createVerticalStrut(4));
+        card.add(txtProfit);
         card.add(Box.createVerticalStrut(16));
 
         card.add(btnStart);
@@ -259,6 +274,38 @@ public class GameFrame extends JFrame {
         card.add(Box.createVerticalGlue());
 
         return card;
+    }
+
+    private JLabel createLabel(String text) {
+        JLabel lbl = new JLabel(text);
+        lbl.setForeground(Theme.TEXT_GRAY);
+        lbl.setFont(new Font("SansSerif", Font.PLAIN, 12));
+        lbl.setAlignmentX(Component.LEFT_ALIGNMENT);
+        return lbl;
+    }
+
+    private JTextField createStyledTextField(String text) {
+        JTextField tf = new JTextField(text) {
+            @Override
+            protected void paintComponent(Graphics g) {
+                Graphics2D g2 = (Graphics2D) g.create();
+                g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+                g2.setColor(Theme.INPUT_BG);
+                g2.fillRoundRect(0, 0, getWidth(), getHeight(), 10, 10);
+                g2.setColor(new Color(60, 80, 100));
+                g2.drawRoundRect(0, 0, getWidth()-1, getHeight()-1, 10, 10);
+                g2.dispose();
+                super.paintComponent(g);
+            }
+        };
+        tf.setOpaque(false);
+        tf.setBorder(new EmptyBorder(8, 10, 8, 10));
+        tf.setForeground(Color.WHITE);
+        tf.setCaretColor(Color.WHITE);
+        tf.setFont(Theme.FONT_BOLD);
+        tf.setMaximumSize(new Dimension(300, 40));
+        tf.setAlignmentX(Component.LEFT_ALIGNMENT);
+        return tf;
     }
 
     private void styleComboBox(JComboBox box) {
@@ -291,18 +338,17 @@ public class GameFrame extends JFrame {
         lblBalance.setText(String.format("Balance: $%.2f", amount));
     }
 
-    public void updateCurrentWin(double amount) {
-        lblCurrentWin.setText(String.format("Current Win: $%.2f", amount));
+    public void updateProfitMultiplier(double multiplier) {
+        txtProfit.setText(String.format("%.2fx", multiplier));
     }
-
     public String getBetAmount() { return txtBetAmount.getText(); }
-    public int getBombCount() { return (Integer) cbBombs.getSelectedIndex(); }
+    public int getBombCount() { return (Integer) cbBombs.getSelectedItem(); }
 
     public void setGameActiveState(boolean isActive) {
         btnStart.setEnabled(!isActive);
         btnCashOut.setEnabled(isActive);
         txtBetAmount.setEnabled(!isActive);
-        cbBombs.setEnabled(isActive);
+        cbBombs.setEnabled(!isActive);
         //txtBombCount.setEnabled(!isActive);
 
         for (int i = 0; i < SIZE; i++) {
@@ -371,8 +417,9 @@ public class GameFrame extends JFrame {
     }
 
     public void setTileState(int index, String text, Color bg, Color fg) {
-        RoundedTileButton btn = (RoundedTileButton) gridButtons[index/5][index%5];
+        JButton btn = gridButtons[index/5][index%5];
         btn.setText(text);
+        if (bg != null) btn.setBackground(bg);
         if (fg != null) btn.setForeground(fg);
         btn.setEnabled(false);
     }
